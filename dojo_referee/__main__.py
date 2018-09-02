@@ -12,60 +12,12 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import logging
 import logging.config
-import time
-import threading
 import tkinter as tk
 
-from dojo_referee import settings, sound
-
-logger = logging.getLogger('dojo_referee')
-
-
-class CountdownThread(threading.Thread):
-    def __init__(self, master, duration, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.master = master
-        self.duration = time.strptime(duration, '%M:%S')
-        self.remaining_sec = self.duration.tm_min * 60 + self.duration.tm_sec
-
-        self.should_stop = False
-
-    def run(self):
-        logger.info('Countdown started...')
-        while self.remaining_sec >= 0 and not self.should_stop:
-            remaining_min, remaining_sec = divmod(self.remaining_sec, 60)
-            remaining = '{:02d}:{:02d}'.format(remaining_min, remaining_sec)
-            self.master.update_remaining_time(remaining)
-            time.sleep(1)
-            self.remaining_sec -= 1
-        logger.info('Countdown finished...')
-        return
-
-    def stop(self):
-        self.should_stop = True
-
-
-class BlinkingLabelThread(threading.Thread):
-    def __init__(self, master, text, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.master = master
-        self.text = text
-        self.should_stop = False
-
-    def run(self):
-        while True and not self.should_stop:
-            current_value = self.master.remaining_time.get()
-            if current_value:
-                self.master.remaining_time.set('')
-            else:
-                self.master.remaining_time.set(self.text)
-            time.sleep(0.5)
-        return
-
-    def stop(self):
-        self.should_stop = True
+from dojo_referee.sound import play_begin, play_finish
+from dojo_referee.workers import BlinkingLabelThread, CountdownThread
+from dojo_referee import settings
 
 
 class DojoReferee(tk.Tk):
@@ -133,7 +85,7 @@ class DojoReferee(tk.Tk):
         self.update_remaining_time(settings.INITIAL_TIME)
         self.countdown = CountdownThread(self, settings.INITIAL_TIME)
         self.countdown.start()
-        self.sound_playing = sound.play_begin()
+        self.sound_playing = play_begin()
 
     def stop(self):
         self.countdown_label['fg'] = 'black'
@@ -154,7 +106,7 @@ class DojoReferee(tk.Tk):
             self.countdown_label['fg'] = 'red'
             self.blinking = BlinkingLabelThread(self, time)
             self.blinking.start()
-            self.sound_playing = sound.play_finish()
+            self.sound_playing = play_finish()
         self.remaining_time.set(time)
 
 
