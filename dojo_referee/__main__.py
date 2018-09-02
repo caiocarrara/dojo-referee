@@ -28,7 +28,7 @@ APPLICATION_TITLE = 'Coding Dojo Referee'
 APPLICATION_WIDTH = 400
 APPLICATION_HEIGHT = 200
 APPLICATION_GEOMETRY = '%sx%s' % (APPLICATION_WIDTH, APPLICATION_HEIGHT)
-APPLICATION_DEFAULT_FONT = (None, 26)
+APPLICATION_DEFAULT_FONT = (None, 30, 'bold')
 APPLICATION_SECONDARY_FONT = (None, 22)
 INITIAL_TIME = '05:00'
 LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
@@ -83,8 +83,9 @@ class DojoReferee(tk.Tk):
         self.start_button = tk.Button(
             self.main_frame,
             text='Start',
+            width=8,
             bg='green',
-            activebackground='lightgreen',
+            activebackground='green',
             fg='white',
             activeforeground='white',
             command=self.start,
@@ -94,6 +95,7 @@ class DojoReferee(tk.Tk):
         self.stop_button = tk.Button(
             self.main_frame,
             text='Stop',
+            width=8,
             bg='red',
             activebackground='red',
             fg='white',
@@ -114,8 +116,8 @@ class DojoReferee(tk.Tk):
 
         self.main_frame.pack(fill=tk.BOTH, expand=1)
         self.countdown_label.pack(fill=tk.X, pady=10)
-        self.start_button.pack(fill=tk.X, pady=10)
-        self.stop_button.pack(fill=tk.X, pady=10)
+        self.start_button.pack(side='left', pady=10)
+        self.stop_button.pack(side='right', pady=10)
 
     def start(self):
         self.update_remaining_time(INITIAL_TIME)
