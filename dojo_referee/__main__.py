@@ -35,6 +35,7 @@ ASSETS_DIR = os.path.join(APPLICATION_BASE_DIR, 'assets')
 INITIAL_TIME = '05:00'
 LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
 SOUND_EXEC = 'aplay'
+SOUND_BEGIN_FILE = os.path.join(ASSETS_DIR, 'begin.wav')
 SOUND_FINISH_FILE = os.path.join(ASSETS_DIR, 'finish.wav')
 
 
@@ -148,6 +149,11 @@ class DojoReferee(tk.Tk):
         self.update_remaining_time(INITIAL_TIME)
         self.countdown = CountdownThread(self, INITIAL_TIME)
         self.countdown.start()
+        try:
+            self.sound_playing = subprocess.Popen([SOUND_EXEC, SOUND_BEGIN_FILE], stdout=subprocess.DEVNULL,
+                                                  stderr=subprocess.STDOUT)
+        except OSError as exc:
+            logger.error('The following error happened trying to play finish sound', exc)
 
     def stop(self):
         self.countdown_label['fg'] = 'black'
