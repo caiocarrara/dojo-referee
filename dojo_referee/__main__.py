@@ -15,6 +15,7 @@
 import logging
 import logging.config
 import os
+import subprocess
 import time
 import threading
 import tkinter as tk
@@ -32,6 +33,8 @@ APPLICATION_DEFAULT_FONT = (None, 30, 'bold')
 APPLICATION_SECONDARY_FONT = (None, 22)
 INITIAL_TIME = '05:00'
 LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
+SOUND_EXEC = 'aplay'
+SOUND_FINISH_FILE = os.path.join(APPLICATION_BASE_DIR, 'finish.wav')
 
 
 class CountdownThread(threading.Thread):
@@ -128,12 +131,20 @@ class DojoReferee(tk.Tk):
         if hasattr(self, 'countdown'):
             self.countdown.stop()
             self.update_remaining_time(INITIAL_TIME)
+        if hasattr(self, 'sound_playing'):
+            self.sound_playing.terminate()
 
     def safe_exit(self):
         self.stop()
         self.after(200, self.destroy)
 
     def update_remaining_time(self, time):
+        if time == '00:00':
+            try:
+                self.sound_playing = subprocess.Popen([SOUND_EXEC, SOUND_FINISH_FILE], stdout=subprocess.DEVNULL,
+                                                      stderr=subprocess.STDOUT)
+            except OSError as exc:
+                logger.error('The following error happened trying to play finish sound', exc)
         self.remaining_time.set(time)
 
 
