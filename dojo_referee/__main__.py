@@ -12,11 +12,18 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import logging
+import logging.config
+import os
 import time
 import threading
 import tkinter as tk
 
 
+logger = logging.getLogger('dojo_referee')
+
+
+APPLICATION_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 APPLICATION_TITLE = 'Coding Dojo Referee'
 APPLICATION_WIDTH = 400
 APPLICATION_HEIGHT = 200
@@ -24,6 +31,7 @@ APPLICATION_GEOMETRY = '%sx%s' % (APPLICATION_WIDTH, APPLICATION_HEIGHT)
 APPLICATION_DEFAULT_FONT = (None, 26)
 APPLICATION_SECONDARY_FONT = (None, 22)
 INITIAL_TIME = '05:00'
+LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
 
 
 class CountdownThread(threading.Thread):
@@ -36,14 +44,14 @@ class CountdownThread(threading.Thread):
         self.should_stop = False
 
     def run(self):
-        print('Countdown started...')
+        logger.info('Countdown started...')
         while self.remaining_sec >= 0 and not self.should_stop:
             remaining_min, remaining_sec = divmod(self.remaining_sec, 60)
             remaining = '{:02d}:{:02d}'.format(remaining_min, remaining_sec)
             self.master.update_remaining_time(remaining)
             time.sleep(1)
             self.remaining_sec -= 1
-        print('Countdown finished...')
+        logger.info('Countdown finished...')
         return
 
     def stop(self):
@@ -128,6 +136,7 @@ class DojoReferee(tk.Tk):
 
 
 def main():
+    logging.config.fileConfig(LOG_CONFIG_FILE)
     referee = DojoReferee()
     referee.mainloop()
 
