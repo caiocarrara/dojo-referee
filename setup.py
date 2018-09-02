@@ -28,6 +28,11 @@ setuptools.setup(
     long_description=long_description,
     url='https://github.com/cacarrara/dojo-referee',
     packages=setuptools.find_packages(),
+    package_data={
+        'dojo_referee': [
+            'logging.conf',
+        ]
+    },
     entry_points={
         'console_scripts': [
             'dojo-referee=dojo_referee.__main__:main',
