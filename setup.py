@@ -21,7 +21,7 @@ with open('README.rst', 'r') as readme:
 
 setuptools.setup(
     name='dojo-referee',
-    version='0.0.2',
+    version='0.1.0',
     author='Caio Carrara',
     author_email='eu@caiocarrara.com.br',
     description='Just another Coding Dojo assistant tool (but with GUI)',
