@@ -14,25 +14,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import logging
 import logging.config
-import os
 import time
 import threading
 import tkinter as tk
 
-from dojo_referee import sound
+from dojo_referee import settings, sound
 
 logger = logging.getLogger('dojo_referee')
-
-
-APPLICATION_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-APPLICATION_TITLE = 'Coding Dojo Referee'
-APPLICATION_WIDTH = 400
-APPLICATION_HEIGHT = 200
-APPLICATION_GEOMETRY = '%sx%s' % (APPLICATION_WIDTH, APPLICATION_HEIGHT)
-APPLICATION_DEFAULT_FONT = (None, 30, 'bold')
-APPLICATION_SECONDARY_FONT = (None, 22)
-INITIAL_TIME = '00:04'
-LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
 
 
 class CountdownThread(threading.Thread):
@@ -83,10 +71,10 @@ class BlinkingLabelThread(threading.Thread):
 class DojoReferee(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title(APPLICATION_TITLE)
-        self.geometry(APPLICATION_GEOMETRY)
-        self.standard_font = APPLICATION_DEFAULT_FONT
-        self.secondary_font = APPLICATION_SECONDARY_FONT
+        self.title(settings.APPLICATION_TITLE)
+        self.geometry(settings.APPLICATION_GEOMETRY)
+        self.standard_font = settings.APPLICATION_DEFAULT_FONT
+        self.secondary_font = settings.APPLICATION_SECONDARY_FONT
         self.resizable(False, False)
 
         self.setup_widgets()
@@ -96,8 +84,8 @@ class DojoReferee(tk.Tk):
     def setup_widgets(self):
         self.main_frame = tk.Frame(
             self,
-            width=APPLICATION_WIDTH,
-            height=APPLICATION_HEIGHT,
+            width=settings.APPLICATION_WIDTH,
+            height=settings.APPLICATION_HEIGHT,
             bg='white',
             padx=10,
             pady=5,
@@ -127,7 +115,7 @@ class DojoReferee(tk.Tk):
         )
 
         self.remaining_time = tk.StringVar(self.main_frame)
-        self.remaining_time.set(INITIAL_TIME)
+        self.remaining_time.set(settings.INITIAL_TIME)
         self.countdown_label = tk.Label(
             self.main_frame,
             textvar=self.remaining_time,
@@ -142,8 +130,8 @@ class DojoReferee(tk.Tk):
         self.stop_button.pack(side='right', pady=10)
 
     def start(self):
-        self.update_remaining_time(INITIAL_TIME)
-        self.countdown = CountdownThread(self, INITIAL_TIME)
+        self.update_remaining_time(settings.INITIAL_TIME)
+        self.countdown = CountdownThread(self, settings.INITIAL_TIME)
         self.countdown.start()
         self.sound_playing = sound.play_begin()
 
@@ -151,7 +139,7 @@ class DojoReferee(tk.Tk):
         self.countdown_label['fg'] = 'black'
         if hasattr(self, 'countdown'):
             self.countdown.stop()
-            self.update_remaining_time(INITIAL_TIME)
+            self.update_remaining_time(settings.INITIAL_TIME)
         if hasattr(self, 'blinking'):
             self.blinking.stop()
         if hasattr(self, 'sound_playing'):
@@ -171,7 +159,7 @@ class DojoReferee(tk.Tk):
 
 
 def main():
-    logging.config.fileConfig(LOG_CONFIG_FILE)
+    logging.config.fileConfig(settings.LOG_CONFIG_FILE)
     referee = DojoReferee()
     referee.mainloop()
 

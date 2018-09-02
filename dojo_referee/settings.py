@@ -12,31 +12,23 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
-import logging
-import subprocess
-
-from dojo_referee import settings
+import os
 
 
-logger = logging.getLogger('dojo_referee')
+APPLICATION_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ASSETS_DIR = os.path.join(APPLICATION_BASE_DIR, 'assets')
 
+APPLICATION_TITLE = 'Coding Dojo Referee'
+APPLICATION_WIDTH = 400
+APPLICATION_HEIGHT = 200
+APPLICATION_GEOMETRY = '%sx%s' % (APPLICATION_WIDTH, APPLICATION_HEIGHT)
+APPLICATION_DEFAULT_FONT = (None, 30, 'bold')
+APPLICATION_SECONDARY_FONT = (None, 22)
 
-def play(audio_file_path):
-    try:
-        sound_playing = subprocess.Popen(
-            [settings.SOUND_EXEC, audio_file_path],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-        )
-        return sound_playing
-    except OSError as exc:
-        msg = 'The following error happened trying to play finish sound'
-        logger.error(msg, exc)
+LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
 
+INITIAL_TIME = '05:00'
 
-def play_begin():
-    return play(settings.SOUND_BEGIN_FILE)
-
-
-def play_finish():
-    return play(settings.SOUND_FINISH_FILE)
+SOUND_EXEC = 'aplay'
+SOUND_BEGIN_FILE = os.path.join(ASSETS_DIR, 'begin.wav')
+SOUND_FINISH_FILE = os.path.join(ASSETS_DIR, 'finish.wav')
