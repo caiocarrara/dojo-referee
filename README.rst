@@ -15,3 +15,4 @@ How to use
 Features
 --------
 - Countdown for pilot iteration
+- Sound notifications
