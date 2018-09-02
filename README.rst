@@ -20,6 +20,11 @@ Features
 
 Changelog
 ---------
+**0.1.0**
+
+- Adds sound notifications for start and end of an iteration
+- Minor fixes and improvements
+
 **0.0.2**
 
 - Fix logging: using logging properly instead of print()
