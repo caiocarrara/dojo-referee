@@ -15,11 +15,11 @@
 import logging
 import logging.config
 import os
-import subprocess
 import time
 import threading
 import tkinter as tk
 
+from dojo_referee import sound
 
 logger = logging.getLogger('dojo_referee')
 
@@ -31,12 +31,8 @@ APPLICATION_HEIGHT = 200
 APPLICATION_GEOMETRY = '%sx%s' % (APPLICATION_WIDTH, APPLICATION_HEIGHT)
 APPLICATION_DEFAULT_FONT = (None, 30, 'bold')
 APPLICATION_SECONDARY_FONT = (None, 22)
-ASSETS_DIR = os.path.join(APPLICATION_BASE_DIR, 'assets')
-INITIAL_TIME = '05:00'
+INITIAL_TIME = '00:04'
 LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
-SOUND_EXEC = 'aplay'
-SOUND_BEGIN_FILE = os.path.join(ASSETS_DIR, 'begin.wav')
-SOUND_FINISH_FILE = os.path.join(ASSETS_DIR, 'finish.wav')
 
 
 class CountdownThread(threading.Thread):
@@ -149,11 +145,7 @@ class DojoReferee(tk.Tk):
         self.update_remaining_time(INITIAL_TIME)
         self.countdown = CountdownThread(self, INITIAL_TIME)
         self.countdown.start()
-        try:
-            self.sound_playing = subprocess.Popen([SOUND_EXEC, SOUND_BEGIN_FILE], stdout=subprocess.DEVNULL,
-                                                  stderr=subprocess.STDOUT)
-        except OSError as exc:
-            logger.error('The following error happened trying to play finish sound', exc)
+        self.sound_playing = sound.play_begin()
 
     def stop(self):
         self.countdown_label['fg'] = 'black'
@@ -174,11 +166,7 @@ class DojoReferee(tk.Tk):
             self.countdown_label['fg'] = 'red'
             self.blinking = BlinkingLabelThread(self, time)
             self.blinking.start()
-            try:
-                self.sound_playing = subprocess.Popen([SOUND_EXEC, SOUND_FINISH_FILE], stdout=subprocess.DEVNULL,
-                                                      stderr=subprocess.STDOUT)
-            except OSError as exc:
-                logger.error('The following error happened trying to play finish sound', exc)
+            self.sound_playing = sound.play_finish()
         self.remaining_time.set(time)
 
 
