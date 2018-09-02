@@ -1,0 +1,2 @@
+include dojo_referee/assets/*.wav
+include dojo_referee/*.conf
