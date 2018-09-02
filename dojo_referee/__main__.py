@@ -61,6 +61,27 @@ class CountdownThread(threading.Thread):
         self.should_stop = True
 
 
+class BlinkingLabelThread(threading.Thread):
+    def __init__(self, master, text, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.master = master
+        self.text = text
+        self.should_stop = False
+
+    def run(self):
+        while True and not self.should_stop:
+            current_value = self.master.remaining_time.get()
+            if current_value:
+                self.master.remaining_time.set('')
+            else:
+                self.master.remaining_time.set(self.text)
+            time.sleep(0.5)
+        return
+
+    def stop(self):
+        self.should_stop = True
+
+
 class DojoReferee(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -128,9 +149,12 @@ class DojoReferee(tk.Tk):
         self.countdown.start()
 
     def stop(self):
+        self.countdown_label['fg'] = 'black'
         if hasattr(self, 'countdown'):
             self.countdown.stop()
             self.update_remaining_time(INITIAL_TIME)
+        if hasattr(self, 'blinking'):
+            self.blinking.stop()
         if hasattr(self, 'sound_playing'):
             self.sound_playing.terminate()
 
@@ -140,6 +164,9 @@ class DojoReferee(tk.Tk):
 
     def update_remaining_time(self, time):
         if time == '00:00':
+            self.countdown_label['fg'] = 'red'
+            self.blinking = BlinkingLabelThread(self, time)
+            self.blinking.start()
             try:
                 self.sound_playing = subprocess.Popen([SOUND_EXEC, SOUND_FINISH_FILE], stdout=subprocess.DEVNULL,
                                                       stderr=subprocess.STDOUT)
