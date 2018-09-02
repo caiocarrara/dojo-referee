@@ -31,10 +31,11 @@ APPLICATION_HEIGHT = 200
 APPLICATION_GEOMETRY = '%sx%s' % (APPLICATION_WIDTH, APPLICATION_HEIGHT)
 APPLICATION_DEFAULT_FONT = (None, 30, 'bold')
 APPLICATION_SECONDARY_FONT = (None, 22)
+ASSETS_DIR = os.path.join(APPLICATION_BASE_DIR, 'assets')
 INITIAL_TIME = '05:00'
 LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
 SOUND_EXEC = 'aplay'
-SOUND_FINISH_FILE = os.path.join(APPLICATION_BASE_DIR, 'finish.wav')
+SOUND_FINISH_FILE = os.path.join(ASSETS_DIR, 'finish.wav')
 
 
 class CountdownThread(threading.Thread):
