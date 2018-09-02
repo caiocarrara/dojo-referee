@@ -27,11 +27,11 @@ INITIAL_TIME = '05:00'
 
 
 class CountdownThread(threading.Thread):
-    def __init__(self, master, duration_time, *args, **kwargs):
+    def __init__(self, master, duration, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.master = master
-        self.duration_time = time.strptime(duration_time, '%M:%S')
-        self.remaining_sec = self.duration_time.tm_min * 60 + self.duration_time.tm_sec
+        self.duration = time.strptime(duration, '%M:%S')
+        self.remaining_sec = self.duration.tm_min * 60 + self.duration.tm_sec
 
         self.should_stop = False
 
