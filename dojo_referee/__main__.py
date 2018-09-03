@@ -42,7 +42,7 @@ class DojoReferee(tk.Tk):
             padx=10,
             pady=5,
         )
-        self.start_button = tk.Button(
+        self.btn_start_iteration = tk.Button(
             self.main_frame,
             text='Start',
             width=8,
@@ -54,7 +54,7 @@ class DojoReferee(tk.Tk):
             font=self.secondary_font,
         )
 
-        self.stop_button = tk.Button(
+        self.btn_stop_iteration = tk.Button(
             self.main_frame,
             text='Stop',
             width=8,
@@ -78,8 +78,8 @@ class DojoReferee(tk.Tk):
 
         self.main_frame.pack(fill=tk.BOTH, expand=1)
         self.countdown_label.pack(fill=tk.X, pady=10)
-        self.start_button.pack(side='left', pady=10)
-        self.stop_button.pack(side='right', pady=10)
+        self.btn_start_iteration.pack(side='left', pady=10)
+        self.btn_stop_iteration.pack(side='right', pady=10)
 
     def start(self):
         self.update_remaining_time(settings.INITIAL_TIME)
