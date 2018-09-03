@@ -12,6 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import logging
 import logging.config
 import tkinter as tk
 
@@ -19,17 +20,19 @@ from dojo_referee.sound import play_begin, play_finish
 from dojo_referee.workers import BlinkingLabelThread, CountdownThread
 from dojo_referee import settings
 
+logger = logging.getLogger('dojo_referee')
+
 
 class DojoReferee(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(settings.APPLICATION_TITLE)
         self.geometry(settings.APPLICATION_GEOMETRY)
-        self.standard_font = settings.APPLICATION_DEFAULT_FONT
-        self.secondary_font = settings.APPLICATION_SECONDARY_FONT
         self.resizable(False, False)
 
         self.setup_widgets()
+
+        self.session_started = False
 
         self.protocol('WM_DELETE_WINDOW', self.safe_exit)
 
@@ -42,6 +45,17 @@ class DojoReferee(tk.Tk):
             padx=10,
             pady=5,
         )
+        self.btn_toggle_session = tk.Button(
+            self.main_frame,
+            text='Start Dojo Session',
+            bg='royalblue',
+            activebackground='dodgerblue',
+            fg='white',
+            activeforeground='white',
+            command=self.toggle_session,
+            font=settings.APPLICATION_DEFAULT_FONT,
+        )
+
         self.btn_start_iteration = tk.Button(
             self.main_frame,
             text='Start',
@@ -51,7 +65,8 @@ class DojoReferee(tk.Tk):
             fg='white',
             activeforeground='white',
             command=self.start,
-            font=self.secondary_font,
+            font=settings.APPLICATION_SECONDARY_FONT,
+            state=tk.DISABLED,
         )
 
         self.btn_stop_iteration = tk.Button(
@@ -63,7 +78,8 @@ class DojoReferee(tk.Tk):
             fg='white',
             activeforeground='white',
             command=self.stop,
-            font=self.secondary_font,
+            font=settings.APPLICATION_SECONDARY_FONT,
+            state=tk.DISABLED,
         )
 
         self.remaining_time = tk.StringVar(self.main_frame)
@@ -73,13 +89,27 @@ class DojoReferee(tk.Tk):
             textvar=self.remaining_time,
             bg='white',
             fg='black',
-            font=self.standard_font,
+            font=settings.APPLICATION_HERO_FONT,
         )
 
         self.main_frame.pack(fill=tk.BOTH, expand=1)
+        self.btn_toggle_session.pack(fill=tk.X, pady=10)
         self.countdown_label.pack(fill=tk.X, pady=10)
         self.btn_start_iteration.pack(side='left', pady=10)
         self.btn_stop_iteration.pack(side='right', pady=10)
+
+    def toggle_session(self):
+        if not self.session_started:
+            logger.info('Session started')
+            self.btn_start_iteration['state'] = tk.NORMAL
+            self.btn_stop_iteration['state'] = tk.NORMAL
+            self.btn_toggle_session['text'] = 'Finish Dojo Session'
+        else:
+            logger.info('Session finished')
+            self.btn_start_iteration['state'] = tk.DISABLED
+            self.btn_stop_iteration['state'] = tk.DISABLED
+            self.btn_toggle_session['text'] = 'Start Dojo Session'
+        self.session_started = not self.session_started
 
     def start(self):
         self.update_remaining_time(settings.INITIAL_TIME)
