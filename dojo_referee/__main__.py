@@ -12,6 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+import argparse
 import logging
 import logging.config
 import tkinter as tk
@@ -25,12 +26,15 @@ logger = logging.getLogger('dojo_referee')
 
 
 class DojoReferee(tk.Tk):
-    def __init__(self):
+    def __init__(self, args):
         super().__init__()
         self.title(settings.APPLICATION_TITLE)
         self.geometry(settings.APPLICATION_GEOMETRY)
         self.resizable(False, False)
-        self.clock_str = '{:02}:00'.format(settings.ITERATION_TIME_MIN)
+        if args.debug:
+            self.clock_str = '00:05'
+        else:
+            self.clock_str = '{:02}:00'.format(settings.ITERATION_TIME_MIN)
 
         self.setup_widgets()
         self.protocol('WM_DELETE_WINDOW', self.safe_exit)
@@ -140,7 +144,10 @@ class DojoReferee(tk.Tk):
 
 def main():
     logging.config.fileConfig(settings.LOG_CONFIG_FILE)
-    referee = DojoReferee()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--debug', help='activate debug mode', action='store_true')
+    args = parser.parse_args()
+    referee = DojoReferee(args)
     referee.mainloop()
 
 

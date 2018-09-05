@@ -19,3 +19,6 @@ build: clean
 
 run: clean
 	python -m dojo_referee
+
+debug: clean
+	python -m dojo_referee --debug
