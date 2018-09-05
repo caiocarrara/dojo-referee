@@ -13,8 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from datetime import datetime, timedelta
+import logging
 
+from dojo_referee.record import DojoRecord
 from dojo_referee import settings
+
+logger = logging.getLogger('dojo_referee')
 
 
 class DojoParticipant:
@@ -45,12 +49,17 @@ class Dojo:
         self.status = Dojo.WAITING_START
         self.participants = list()
         self.iterations = list()
+        self.dojo_record = DojoRecord()
 
     def start(self):
+        logger.info('Session started')
         self.status = Dojo.STARTED
+        self.dojo_record.write('Dojo Session started')
 
     def finish(self):
+        logger.info('Session finished')
         self.status = Dojo.FINISHED
+        self.dojo_record.write('Dojo Session finished')
 
     def add_participant(self, participant):
         if not self.is_participant(participant):
