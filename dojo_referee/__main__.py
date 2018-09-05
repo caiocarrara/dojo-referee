@@ -30,6 +30,7 @@ class DojoReferee(tk.Tk):
         self.title(settings.APPLICATION_TITLE)
         self.geometry(settings.APPLICATION_GEOMETRY)
         self.resizable(False, False)
+        self.clock_str = '{:02}:00'.format(settings.ITERATION_TIME_MIN)
 
         self.setup_widgets()
 
@@ -86,7 +87,7 @@ class DojoReferee(tk.Tk):
         )
 
         self.remaining_time = tk.StringVar(self.main_frame)
-        self.remaining_time.set(settings.INITIAL_TIME)
+        self.remaining_time.set(self.clock_str)
         self.countdown_label = tk.Label(
             self.main_frame,
             textvar=self.remaining_time,
@@ -117,8 +118,8 @@ class DojoReferee(tk.Tk):
         self.session_started = not self.session_started
 
     def start(self):
-        self.update_remaining_time(settings.INITIAL_TIME)
-        self.countdown = CountdownThread(self, settings.INITIAL_TIME)
+        self.update_remaining_time(self.clock_str)
+        self.countdown = CountdownThread(self, self.clock_str)
         self.countdown.start()
         self.sound_playing = play_begin()
 
@@ -126,7 +127,7 @@ class DojoReferee(tk.Tk):
         self.countdown_label['fg'] = 'black'
         if hasattr(self, 'countdown'):
             self.countdown.stop()
-            self.update_remaining_time(settings.INITIAL_TIME)
+            self.update_remaining_time(self.clock_str)
         if hasattr(self, 'blinking'):
             self.blinking.stop()
         if hasattr(self, 'sound_playing'):

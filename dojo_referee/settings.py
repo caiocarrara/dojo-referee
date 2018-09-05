@@ -30,7 +30,7 @@ DOJO_RECORD_PATH = 'dojo_record.log'
 
 LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
 
-INITIAL_TIME = '05:00'
+ITERATION_TIME_MIN = 5
 
 SOUND_EXEC = 'aplay'
 SOUND_BEGIN_FILE = os.path.join(ASSETS_DIR, 'begin.wav')
