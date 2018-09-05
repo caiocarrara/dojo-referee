@@ -16,3 +16,6 @@ clean-build:
 
 build: clean
 	python setup.py sdist bdist_wheel
+
+run: clean
+	python -m dojo_referee
