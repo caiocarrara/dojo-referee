@@ -36,6 +36,7 @@ class DojoReferee(tk.Tk):
         self.protocol('WM_DELETE_WINDOW', self.safe_exit)
 
         self.dojo = Dojo()
+        self.iteration_active = False
 
     def setup_widgets(self):
         self.main_frame = tk.Frame(
@@ -57,28 +58,14 @@ class DojoReferee(tk.Tk):
             font=settings.APPLICATION_DEFAULT_FONT,
         )
 
-        self.btn_start_iteration = tk.Button(
+        self.btn_toggle_iteration = tk.Button(
             self.main_frame,
             text='Start',
-            width=8,
             bg='forestgreen',
             activebackground='green3',
             fg='white',
             activeforeground='white',
-            command=self.start,
-            font=settings.APPLICATION_SECONDARY_FONT,
-            state=tk.DISABLED,
-        )
-
-        self.btn_stop_iteration = tk.Button(
-            self.main_frame,
-            text='Stop',
-            width=8,
-            bg='orange3',
-            activebackground='orange2',
-            fg='white',
-            activeforeground='white',
-            command=self.stop,
+            command=self.toggle_iteration,
             font=settings.APPLICATION_SECONDARY_FONT,
             state=tk.DISABLED,
         )
@@ -96,28 +83,38 @@ class DojoReferee(tk.Tk):
         self.main_frame.pack(fill=tk.BOTH, expand=1)
         self.btn_toggle_session.pack(fill=tk.X, pady=10)
         self.countdown_label.pack(fill=tk.X, pady=10)
-        self.btn_start_iteration.pack(side='left', pady=10)
-        self.btn_stop_iteration.pack(side='right', pady=10)
+        self.btn_toggle_iteration.pack(fill=tk.BOTH, pady=10)
 
     def toggle_session(self):
         if self.dojo.status == Dojo.STARTED:
             self.dojo.finish()
-            self.btn_start_iteration['state'] = tk.DISABLED
-            self.btn_stop_iteration['state'] = tk.DISABLED
+            self.btn_toggle_iteration['state'] = tk.DISABLED
             self.btn_toggle_session['text'] = 'Start Dojo Session'
         else:
             self.dojo.start()
-            self.btn_start_iteration['state'] = tk.NORMAL
-            self.btn_stop_iteration['state'] = tk.NORMAL
+            self.btn_toggle_iteration['state'] = tk.NORMAL
             self.btn_toggle_session['text'] = 'Finish Dojo Session'
 
-    def start(self):
+    def toggle_iteration(self):
+        if self.iteration_active:
+            self.finish_iteration()
+        else:
+            self.start_iteration()
+        self.iteration_active = not self.iteration_active
+
+    def start_iteration(self):
         self.update_remaining_time(self.clock_str)
+        self.btn_toggle_iteration['text'] = 'Resume'
+        self.btn_toggle_iteration['bg'] = 'orange3'
+        self.btn_toggle_iteration['activebackground'] = 'orange2'
         self.countdown = CountdownThread(self, self.clock_str)
         self.countdown.start()
         self.sound_playing = play_begin()
 
-    def stop(self):
+    def finish_iteration(self):
+        self.btn_toggle_iteration['text'] = 'Start'
+        self.btn_toggle_iteration['bg'] = 'forestgreen'
+        self.btn_toggle_iteration['activebackground'] = 'green3'
         self.countdown_label['fg'] = 'black'
         if hasattr(self, 'countdown'):
             self.countdown.stop()
@@ -128,11 +125,12 @@ class DojoReferee(tk.Tk):
             self.sound_playing.terminate()
 
     def safe_exit(self):
-        self.stop()
+        self.finish_iteration()
         self.after(200, self.destroy)
 
     def update_remaining_time(self, time):
         if time == '00:00':
+            self.btn_toggle_iteration['text'] = 'Stop'
             self.countdown_label['fg'] = 'red'
             self.blinking = BlinkingLabelThread(self, time)
             self.blinking.start()
