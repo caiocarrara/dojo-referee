@@ -35,7 +35,6 @@ class DojoReferee(tk.Tk):
         self.setup_widgets()
         self.protocol('WM_DELETE_WINDOW', self.safe_exit)
 
-        self.session_started = False
         self.dojo = Dojo()
 
     def setup_widgets(self):
@@ -111,8 +110,6 @@ class DojoReferee(tk.Tk):
             self.btn_start_iteration['state'] = tk.NORMAL
             self.btn_stop_iteration['state'] = tk.NORMAL
             self.btn_toggle_session['text'] = 'Finish Dojo Session'
-
-        self.session_started = not self.session_started
 
     def start(self):
         self.update_remaining_time(self.clock_str)
