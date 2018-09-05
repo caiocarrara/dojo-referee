@@ -16,6 +16,7 @@ import logging
 import logging.config
 import tkinter as tk
 
+from dojo_referee.record import DojoRecord
 from dojo_referee.sound import play_begin, play_finish
 from dojo_referee.workers import BlinkingLabelThread, CountdownThread
 from dojo_referee import settings
@@ -35,6 +36,8 @@ class DojoReferee(tk.Tk):
         self.session_started = False
 
         self.protocol('WM_DELETE_WINDOW', self.safe_exit)
+
+        self.dojo_record = DojoRecord()
 
     def setup_widgets(self):
         self.main_frame = tk.Frame(
@@ -104,11 +107,13 @@ class DojoReferee(tk.Tk):
             self.btn_start_iteration['state'] = tk.NORMAL
             self.btn_stop_iteration['state'] = tk.NORMAL
             self.btn_toggle_session['text'] = 'Finish Dojo Session'
+            self.dojo_record.write('Dojo Session started')
         else:
             logger.info('Session finished')
             self.btn_start_iteration['state'] = tk.DISABLED
             self.btn_stop_iteration['state'] = tk.DISABLED
             self.btn_toggle_session['text'] = 'Start Dojo Session'
+            self.dojo_record.write('Dojo Session finished')
         self.session_started = not self.session_started
 
     def start(self):
