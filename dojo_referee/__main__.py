@@ -33,11 +33,9 @@ class DojoReferee(tk.Tk):
         self.clock_str = '{:02}:00'.format(settings.ITERATION_TIME_MIN)
 
         self.setup_widgets()
-
-        self.session_started = False
-
         self.protocol('WM_DELETE_WINDOW', self.safe_exit)
 
+        self.session_started = False
         self.dojo_record = DojoRecord()
 
     def setup_widgets(self):
