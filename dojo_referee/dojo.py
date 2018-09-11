@@ -52,14 +52,14 @@ class Dojo:
         self.dojo_record = DojoRecord()
 
     def start(self):
-        logger.info('Session started')
         self.status = Dojo.STARTED
-        self.dojo_record.write('Dojo Session started')
+        logger.info('message=dojo session started')
+        self.dojo_record.write('message=dojo session started')
 
     def finish(self):
-        logger.info('Session finished')
         self.status = Dojo.FINISHED
-        self.dojo_record.write('Dojo Session finished')
+        logger.info('message=dojo session finished')
+        self.dojo_record.write('message=dojo session finished')
 
     def add_participant(self, participant):
         if not self.is_participant(participant):
@@ -69,11 +69,11 @@ class Dojo:
         return participant in self.participants
 
     def add_iteration(self, pilot, copilot):
-        logger.info('Iteration added')
         self.add_participant(pilot)
         self.add_participant(copilot)
 
         self.iterations.append(
             DojoIteration(pilot, copilot)
         )
-        self.dojo_record.write('Iteration added. Pilot: %s, Copilot: %s' % (pilot, copilot))
+        logger.info('message=iteration started, pilot=%s, copilot=%s' % (pilot, copilot))
+        self.dojo_record.write('message=iteration started, pilot=%s, copilot=%s' % (pilot, copilot))

@@ -29,14 +29,14 @@ class CountdownThread(threading.Thread):
         self.should_stop = False
 
     def run(self):
-        logger.info('Countdown started...')
+        logger.info('message=countdown started')
         while self.remaining_sec >= 0 and not self.should_stop:
             remaining_min, remaining_sec = divmod(self.remaining_sec, 60)
             remaining = '{:02d}:{:02d}'.format(remaining_min, remaining_sec)
             self.master.update_remaining_time(remaining)
             time.sleep(1)
             self.remaining_sec -= 1
-        logger.info('Countdown finished...')
+        logger.info('message=countdown finished')
         return
 
     def stop(self):
