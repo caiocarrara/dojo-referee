@@ -15,7 +15,7 @@
 from datetime import datetime, timedelta
 import logging
 
-from dojo_referee.record import DojoRecord
+from dojo_referee.record import Record
 from dojo_referee import settings
 
 logger = logging.getLogger('dojo_referee')
@@ -49,7 +49,8 @@ class Dojo:
         self.status = Dojo.WAITING_START
         self.participants = list()
         self.iterations = list()
-        self.dojo_record = DojoRecord()
+        self.dojo_record = Record(record_path=settings.DOJO_RECORD_PATH)
+        self.participants_record = Record(record_path=settings.PARTICIPANTS_RECORD_PATH, timestamp=False)
 
     def start(self):
         self.status = Dojo.STARTED
@@ -64,6 +65,7 @@ class Dojo:
     def add_participant(self, participant):
         if not self.is_participant(participant):
             self.participants.append(participant)
+            self.participants_record.write(str(participant))
 
     def is_participant(self, participant):
         return participant in self.participants

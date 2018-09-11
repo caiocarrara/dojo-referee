@@ -27,6 +27,7 @@ APPLICATION_HERO_FONT = (None, 30, 'bold')
 APPLICATION_SECONDARY_FONT = (None, 18)
 
 DOJO_RECORD_PATH = 'dojo_record.log'
+PARTICIPANTS_RECORD_PATH = 'participants_record.log'
 
 LOG_CONFIG_FILE = os.path.join(APPLICATION_BASE_DIR, 'logging.conf')
 

@@ -14,15 +14,18 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from datetime import datetime
 
-from dojo_referee import settings
 
-
-class DojoRecord:
-    def __init__(self, dojo_record_path=settings.DOJO_RECORD_PATH):
-        self.record_file_path = dojo_record_path
+class Record:
+    def __init__(self, record_path, timestamp=True):
+        self.record_file_path = record_path
+        self.with_timestamp = timestamp
 
     def write(self, msg):
-        now = datetime.now()
-        with open(self.record_file_path, 'a+') as record_file:
+        if self.with_timestamp:
+            now = datetime.now()
             record_msg = '%s - %s\n' % (now.isoformat(), msg)
+        else:
+            record_msg = '%s\n' % msg
+
+        with open(self.record_file_path, 'a+') as record_file:
             record_file.write(record_msg)
