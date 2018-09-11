@@ -17,12 +17,96 @@ import logging
 import logging.config
 import tkinter as tk
 
-from dojo_referee.dojo import Dojo
+from dojo_referee.dojo import Dojo, DojoParticipant
 from dojo_referee.sound import play_begin, play_finish
 from dojo_referee.workers import BlinkingLabelThread, CountdownThread
 from dojo_referee import settings
 
 logger = logging.getLogger('dojo_referee')
+
+
+class ParticipantDialog(tk.Toplevel):
+    def __init__(self, master, *args, **kwargs):
+        self.dojo = kwargs.pop('dojo')
+        self.on_close_callback = kwargs.pop('on_close')
+
+        super().__init__(master, *args, **kwargs)
+
+        self.title('Informe os participantes')
+        self.geometry(settings.APPLICATION_GEOMETRY)
+        self.resizable(False, False)
+
+        self.setup_widgets()
+
+    def setup_widgets(self):
+        self.pilot_var = tk.StringVar()
+        self.copilot_var = tk.StringVar()
+
+        self.main_frame = tk.Frame(
+            self,
+            width=settings.APPLICATION_WIDTH,
+            height=settings.APPLICATION_HEIGHT,
+            bg='white',
+            padx=10,
+            pady=5,
+        )
+
+        self.pilot_label = tk.Label(
+            self.main_frame,
+            text='Piloto',
+            bg='white',
+            padx=5,
+            pady=5,
+            font=settings.APPLICATION_DEFAULT_FONT,
+        )
+        self.copilot_label = tk.Label(
+            self.main_frame,
+            text='Co-Piloto',
+            bg='white',
+            padx=5,
+            pady=5,
+            font=settings.APPLICATION_DEFAULT_FONT,
+        )
+
+        self.pilot_entry = tk.Entry(
+            self.main_frame,
+            textvariable=self.pilot_var,
+            font=settings.APPLICATION_DEFAULT_FONT,
+        )
+        self.copilot_entry = tk.Entry(
+            self.main_frame,
+            textvariable=self.copilot_var,
+            font=settings.APPLICATION_DEFAULT_FONT,
+        )
+
+        self.save_button = tk.Button(
+            self.main_frame,
+            text='Save',
+            bg='royalblue',
+            activebackground='dodgerblue',
+            fg='white',
+            activeforeground='white',
+            font=settings.APPLICATION_DEFAULT_FONT,
+            command=self.add_participants_and_close
+        )
+
+        self.main_frame.pack(fill=tk.BOTH, expand=1)
+        self.pilot_label.pack(fill=tk.X)
+        self.pilot_entry.pack(fill=tk.X)
+        self.copilot_label.pack(fill=tk.X)
+        self.copilot_entry.pack(fill=tk.X)
+        self.save_button.pack(fill=tk.X)
+
+    def add_participants_and_close(self):
+        pilot_participant = DojoParticipant(self.pilot_var.get())
+        copilot_participant = DojoParticipant(self.copilot_var.get())
+        self.dojo.add_iteration(pilot_participant, copilot_participant)
+        self.destroy()
+
+    def destroy(self):
+        if self.on_close_callback:
+            self.on_close_callback()
+        super().destroy()
 
 
 class DojoReferee(tk.Tk):
@@ -103,7 +187,8 @@ class DojoReferee(tk.Tk):
         if self.iteration_active:
             self.finish_iteration()
         else:
-            self.start_iteration()
+            ParticipantDialog(self, dojo=self.dojo, on_close=self.start_iteration)
+
         self.iteration_active = not self.iteration_active
 
     def start_iteration(self):
@@ -127,6 +212,8 @@ class DojoReferee(tk.Tk):
             self.blinking.stop()
         if hasattr(self, 'sound_playing'):
             self.sound_playing.terminate()
+        if hasattr(self, 'participant_dialog'):
+            self.participant_dialog.destroy()
 
     def safe_exit(self):
         self.finish_iteration()

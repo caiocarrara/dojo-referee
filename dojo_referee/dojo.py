@@ -69,9 +69,11 @@ class Dojo:
         return participant in self.participants
 
     def add_iteration(self, pilot, copilot):
+        logger.info('Iteration added')
         self.add_participant(pilot)
         self.add_participant(copilot)
 
         self.iterations.append(
             DojoIteration(pilot, copilot)
         )
+        self.dojo_record.write('Iteration added. Pilot: %s, Copilot: %s' % (pilot, copilot))
