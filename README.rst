@@ -11,11 +11,18 @@ How to use
   $ pip install dojo-referee
   $ dojo-referee
 
+The program will generate log of dojo session and iterations with data about
+participants in the current directory. So, it can be better if it be run in the
+same directory of dojo solution being developed.
+
 
 Features
 --------
 - Countdown for pilot iteration
 - Sound notifications
+- Log of all the Dojo sessions data
+- Log of iterations data
+- Register of participants
 
 
 Changelog
