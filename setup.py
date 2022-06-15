@@ -26,7 +26,7 @@ setuptools.setup(
     author_email='eu@caiocarrara.com.br',
     description='Just another Coding Dojo assistant tool (but with GUI)',
     long_description=long_description,
-    url='https://github.com/cacarrara/dojo-referee',
+    url='https://github.com/caiocarrara/dojo-referee',
     packages=setuptools.find_packages(),
     include_package_data=True,
     entry_points={
